@@ -28,61 +28,49 @@ import static org.junit.Assert.*;
  *
  * @author 18038659
  */
-public class StartTest {
+public class StateTestNoSession {
 
     private static final String path = "assignment2_server_18038659/"; //TODO: Change to your setup
     private static int port = 8080;
+    public CloseableHttpClient client = HttpClients.createDefault();
 
-    public StartTest() {
-  
+    public StateTestNoSession() {
     }
 
     @Before
     public void setUpClass() {
-        
     }
 
     @After
     public void tearDownClass() {
     }
 
-
-
-
-    @Test
-    public void StartTest() throws Exception {
-
-        assertEquals(statusRequest("jack/start"), HttpStatus.SC_OK);
-        assertNotEquals(makeServiceRequest("jack/start"), makeServiceRequest("jack/start"));
+    @Before
+    public void setUp() {
     }
 
-    private Object statusRequest(String expression) throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
+    @After
+    public void tearDown() {
+    }
+
+    // TODO add test methods here.
+    // The methods must be annotated with annotation @Test. For example:
+    //
+    @Test
+    public void startNoSessionState() throws Exception {
+        // no game session created should receive 404 request
+        assertEquals(HttpStatus.SC_NOT_FOUND, statusRequest("jack/state"));
+
+    }
+
+    private Object statusRequest(String expression) throws IOException, Exception {
 
         URI url = constructUri(expression);
         HttpGet get = new HttpGet(url);
 
-        //HttpGet get = new HttpGet("http://localhost:8080/assignment2_server_18038659/jack/start");
+        System.out.println(get);
         CloseableHttpResponse response = client.execute(get);
         return response.getStatusLine().getStatusCode();
-    }
-
-    private static String makeServiceRequest(String expression) throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
-   
-        URI url = constructUri(expression);
-        HttpGet get = new HttpGet(url);
-
-        //HttpGet get = new HttpGet("http://localhost:8080/assignment2_server_18038659/jack/start");
-        CloseableHttpResponse response = client.execute(get);
-      
-        if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK);
-      
-        Header[] header = response.getHeaders("Set-Cookie");
-        String arr[] = header[0].getValue().split(";");
-        String jsessionidArray[] = arr[0].split("=");
-        String jsessionid = jsessionidArray[1];
-        return jsessionid;
 
     }
 
@@ -94,7 +82,7 @@ public class StartTest {
                     .setScheme("http")
                     .setHost("localhost")
                     .setPort(port)
-                    .setPath(path+expression)
+                    .setPath(path + expression)
                     //.setParameter("expression", expression)
                     .build();
         } catch (URISyntaxException ex) {
@@ -102,5 +90,4 @@ public class StartTest {
         }
         return url;
     }
-
 }
