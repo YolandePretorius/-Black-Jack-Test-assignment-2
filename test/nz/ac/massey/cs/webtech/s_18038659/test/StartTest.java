@@ -32,6 +32,7 @@ public class StartTest {
 
     private static final String path = "assignment2_server_18038659/"; //TODO: Change to your setup
     private static int port = 8080;
+    String sessionID;
 
     public StartTest() {
   
@@ -52,8 +53,8 @@ public class StartTest {
     @Test
     public void StartTest() throws Exception {
 
-        assertEquals(statusRequest("jack/start"), HttpStatus.SC_OK);
-        assertNotEquals(makeServiceRequest("jack/start"), makeServiceRequest("jack/start"));
+        assertEquals(statusRequest("jack/start"), HttpStatus.SC_OK);// check if session is creaded when jack/start is called
+        assertNotEquals(makeServiceRequest("jack/start"), makeServiceRequest("jack/start")); // check if a new session is created ech time jack/start is called
     }
 
     private Object statusRequest(String expression) throws Exception {
@@ -67,7 +68,7 @@ public class StartTest {
         return response.getStatusLine().getStatusCode();
     }
 
-    private static String makeServiceRequest(String expression) throws Exception {
+    private String makeServiceRequest(String expression) throws Exception {
         CloseableHttpClient client = HttpClients.createDefault();
    
         URI url = constructUri(expression);
@@ -76,13 +77,12 @@ public class StartTest {
         //HttpGet get = new HttpGet("http://localhost:8080/assignment2_server_18038659/jack/start");
         CloseableHttpResponse response = client.execute(get);
       
-        if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK);
-      
+        //if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK);
+        
         Header[] header = response.getHeaders("Set-Cookie");
         String arr[] = header[0].getValue().split(";");
-        String jsessionidArray[] = arr[0].split("=");
-        String jsessionid = jsessionidArray[1];
-        return jsessionid;
+        sessionID = arr[0];
+        return sessionID;
 
     }
 

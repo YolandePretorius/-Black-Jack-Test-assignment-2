@@ -106,6 +106,24 @@ public class test {
         return null;
 
     }
+    
+    private static String makeServiceRequest(String expression) throws Exception {
+        
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+        
+            URI url = constructUri(expression);
+            HttpGet get = new HttpGet(url);
+        
+            try (CloseableHttpResponse response = client.execute(get)) {
+                if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                   return getResponseBody(response.getEntity().getContent()); 
+                }
+                else{                
+                    throw new Exception("Error response from service.");
+		}
+            }
+        }
+    }
 
     private static String getResponseBody(final InputStream stream) throws UnsupportedOperationException, IOException {
 
